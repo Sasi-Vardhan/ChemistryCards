@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Periodic Table Card Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 2.2rem;
+      margin-bottom: 40px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .controls {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 40px;
+    }
+
+    .control-section {
+      margin-bottom: 25px;
+    }
+
+    .control-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #495057;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      align-items: end;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #495057;
+    }
+
+    select, input[type="number"], input[type="color"] {
+      padding: 10px 12px;
+      border: 1.5px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    select:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: #495057;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 42px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .color-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    button {
+      padding: 14px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #generateBtn {
+      background: #2c3e50;
+      color: white;
+    }
+
+    #generateBtn:hover:not(:disabled) {
+      background: #34495e;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+    }
+
+    #downloadBtn {
+      background: #3498db;
+      color: white;
+    }
+
+    #downloadBtn:hover:not(:disabled) {
+      background: #2980b9;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #cardGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 30px;
+      padding: 20px 0;
+    }
+
+    .card {
+      border-radius: 8px;
+      padding: 0;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      background: white;
+      aspect-ratio: 2.5/3.5;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .card-border-top {
+      height: 8px;
+      width: 100%;
+    }
+
+    .card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      justify-content: space-between;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .atomic-number {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .radioactive-badge {
+      background: #ffd43b;
+      color: #000;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .symbol {
+      font-size: 4rem;
+      font-weight: 700;
+      color: #000;
+      line-height: 1;
+      margin: 10px 0;
+      letter-spacing: -2px;
+    }
+
+    .name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+    }
+
+    .electron-config {
+      font-size: 0.85rem;
+      color: #6c757d;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 15px;
+      min-height: 20px;
+    }
+
+    .card-footer {
+      border-top: 1px solid #e9ecef;
+      padding-top: 12px;
+      margin-top: auto;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .meta-label {
+      font-size: 0.8rem;
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .meta-value {
+      font-size: 0.9rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .group-badge {
+      display: inline-block;
+      background: #f8f9fa;
+      color: #495057;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .control-row {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+
+      #cardGrid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+      .controls {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Periodic Table Card Generator</h1>
+
+  <div class="controls">
+    <div class="control-section">
+      <div class="section-title">Select Group</div>
+      <div class="control-row">
+        <div class="control-group">
+          <select id="groupSelect">
+            <option value="">Choose a group...</option>
+            <option value="1">Group 1 – Alkali Metals</option>
+            <option value="2">Group 2 – Alkaline Earth Metals</option>
+            <option value="3">Group 3 – Transition Metals</option>
+            <option value="4">Group 4 – Transition Metals</option>
+            <option value="5">Group 5 – Transition Metals</option>
+            <option value="6">Group 6 – Transition Metals</option>
+            <option value="7">Group 7 – Transition Metals</option>
+            <option value="8">Group 8 – Transition Metals</option>
+            <option value="9">Group 9 – Transition Metals</option>
+            <option value="10">Group 10 – Transition Metals</option>
+            <option value="11">Group 11 – Transition Metals</option>
+            <option value="12">Group 12 – Transition Metals</option>
+            <option value="13">Group 13 – Boron Group</option>
+            <option value="14">Group 14 – Carbon Group</option>
+            <option value="15">Group 15 – Pnictogens</option>
+            <option value="16">Group 16 – Chalcogens</option>
+            <option value="17">Group 17 – Halogens</option>
+            <option value="18">Group 18 – Noble Gases</option>
+            <option value="lanthanide">Lanthanides</option>
+            <option value="actinide">Actinides</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <div class="section-title">Card Dimensions</div>
+      <div class="control-row">
+        <div class="control-group">
+          <label for="cardWidth">Width (px)</label>
+          <input type="number" id="cardWidth" value="240" min="180" max="400">
+        </div>
+        <div class="control-group">
+          <label for="cardHeight">Height (px)</label>
+          <input type="number" id="cardHeight" value="340" min="240" max="500">
+        </div>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <div class="section-title">Card Colors</div>
+      <div class="color-controls">
+        <div class="control-group">
+          <label for="borderColor">Border Color</label>
+          <input type="color" id="borderColor" value="#ffd700">
+        </div>
+        <div class="control-group">
+          <label for="bgColor">Background</label>
+          <input type="color" id="bgColor" value="#ffffff">
+        </div>
+        <div class="control-group">
+          <label for="textColor">Text Color</label>
+          <input type="color" id="textColor" value="#000000">
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button id="generateBtn">Generate Cards</button>
+      <button id="downloadBtn">Download as PDF</button>
+    </div>
+  </div>
+
+  <div id="cardGrid"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+const elements = [
+  /* Period 1 */
+  {symbol:"H", name:"Hydrogen", atomicNumber:1, atomicMass:1.008, group:"1", groupName:"Alkali Metals", category:"nonmetal", radioactive:false, electronConfig:"1s¹"},
+  {symbol:"He", name:"Helium", atomicNumber:2, atomicMass:4.0026, group:"18", groupName:"Noble Gases", category:"noble", radioactive:false, electronConfig:"1s²"},
+
+  /* Period 2 */
+  {symbol:"Li", name:"Lithium", atomicNumber:3, atomicMass:6.94, group:"1", groupName:"Alkali Metals", category:"alkali", radioactive:false, electronConfig:"[He] 2s¹"},
+  {symbol:"Be", name:"Beryllium", atomicNumber:4, atomicMass:9.0122, group:"2", groupName:"Alkaline Earth Metals", category:"alkaline", radioactive:false, electronConfig:"[He] 2s²"},
+  {symbol:"B", name:"Boron", atomicNumber:5, atomicMass:10.81, group:"13", groupName:"Boron Group", category:"metalloid", radioactive:false, electronConfig:"[He] 2s² 2p¹"},
+  {symbol:"C", name:"Carbon", atomicNumber:6, atomicMass:12.011, group:"14", groupName:"Carbon Group", category:"nonmetal", radioactive:false, electronConfig:"[He] 2s² 2p²"},
+  {symbol:"N", name:"Nitrogen", atomicNumber:7, atomicMass:14.007, group:"15", groupName:"Pnictogens", category:"nonmetal", radioactive:false, electronConfig:"[He] 2s² 2p³"},
+  {symbol:"O", name:"Oxygen", atomicNumber:8, atomicMass:15.999, group:"16", groupName:"Chalcogens", category:"nonmetal", radioactive:false, electronConfig:"[He] 2s² 2p⁴"},
+  {symbol:"F", name:"Fluorine", atomicNumber:9, atomicMass:18.998, group:"17", groupName:"Halogens", category:"halogen", radioactive:false, electronConfig:"[He] 2s² 2p⁵"},
+  {symbol:"Ne", name:"Neon", atomicNumber:10, atomicMass:20.18, group:"18", groupName:"Noble Gases", category:"noble", radioactive:false, electronConfig:"[He] 2s² 2p⁶"},
+
+  /* Period 3 */
+  {symbol:"Na", name:"Sodium", atomicNumber:11, atomicMass:22.99, group:"1", groupName:"Alkali Metals", category:"alkali", radioactive:false, electronConfig:"[Ne] 3s¹"},
+  {symbol:"Mg", name:"Magnesium", atomicNumber:12, atomicMass:24.305, group:"2", groupName:"Alkaline Earth Metals", category:"alkaline", radioactive:false, electronConfig:"[Ne] 3s²"},
+  {symbol:"Al", name:"Aluminium", atomicNumber:13, atomicMass:26.982, group:"13", groupName:"Boron Group", category:"metal", radioactive:false, electronConfig:"[Ne] 3s² 3p¹"},
+  {symbol:"Si", name:"Silicon", atomicNumber:14, atomicMass:28.085, group:"14", groupName:"Carbon Group", category:"metalloid", radioactive:false, electronConfig:"[Ne] 3s² 3p²"},
+  {symbol:"P", name:"Phosphorus", atomicNumber:15, atomicMass:30.974, group:"15", groupName:"Pnictogens", category:"nonmetal", radioactive:false, electronConfig:"[Ne] 3s² 3p³"},
+  {symbol:"S", name:"Sulfur", atomicNumber:16, atomicMass:32.06, group:"16", groupName:"Chalcogens", category:"nonmetal", radioactive:false, electronConfig:"[Ne] 3s² 3p⁴"},
+  {symbol:"Cl", name:"Chlorine", atomicNumber:17, atomicMass:35.45, group:"17", groupName:"Halogens", category:"halogen", radioactive:false, electronConfig:"[Ne] 3s² 3p⁵"},
+  {symbol:"Ar", name:"Argon", atomicNumber:18, atomicMass:39.948, group:"18", groupName:"Noble Gases", category:"noble", radioactive:false, electronConfig:"[Ne] 3s² 3p⁶"},
+
+  /* Period 4 */
+  {symbol:"K", name:"Potassium", atomicNumber:19, atomicMass:39.098, group:"1", groupName:"Alkali Metals", category:"alkali", radioactive:false, electronConfig:"[Ar] 4s¹"},
+  {symbol:"Ca", name:"Calcium", atomicNumber:20, atomicMass:40.078, group:"2", groupName:"Alkaline Earth Metals", category:"alkaline", radioactive:false, electronConfig:"[Ar] 4s²"},
+  {symbol:"Sc", name:"Scandium", atomicNumber:21, atomicMass:44.956, group:"3", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d¹ 4s²"},
+  {symbol:"Ti", name:"Titanium", atomicNumber:22, atomicMass:47.867, group:"4", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d² 4s²"},
+  {symbol:"V", name:"Vanadium", atomicNumber:23, atomicMass:50.942, group:"5", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d³ 4s²"},
+  {symbol:"Cr", name:"Chromium", atomicNumber:24, atomicMass:51.996, group:"6", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d⁵ 4s¹"},
+  {symbol:"Mn", name:"Manganese", atomicNumber:25, atomicMass:54.938, group:"7", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d⁵ 4s²"},
+  {symbol:"Fe", name:"Iron", atomicNumber:26, atomicMass:55.845, group:"8", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d⁶ 4s²"},
+  {symbol:"Co", name:"Cobalt", atomicNumber:27, atomicMass:58.933, group:"9", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d⁷ 4s²"},
+  {symbol:"Ni", name:"Nickel", atomicNumber:28, atomicMass:58.693, group:"10", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d⁸ 4s²"},
+  {symbol:"Cu", name:"Copper", atomicNumber:29, atomicMass:63.546, group:"11", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s¹"},
+  {symbol:"Zn", name:"Zinc", atomicNumber:30, atomicMass:65.38, group:"12", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s²"},
+  {symbol:"Ga", name:"Gallium", atomicNumber:31, atomicMass:69.723, group:"13", groupName:"Boron Group", category:"metal", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s² 4p¹"},
+  {symbol:"Ge", name:"Germanium", atomicNumber:32, atomicMass:72.63, group:"14", groupName:"Carbon Group", category:"metalloid", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s² 4p²"},
+  {symbol:"As", name:"Arsenic", atomicNumber:33, atomicMass:74.922, group:"15", groupName:"Pnictogens", category:"metalloid", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s² 4p³"},
+  {symbol:"Se", name:"Selenium", atomicNumber:34, atomicMass:78.971, group:"16", groupName:"Chalcogens", category:"nonmetal", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s² 4p⁴"},
+  {symbol:"Br", name:"Bromine", atomicNumber:35, atomicMass:79.904, group:"17", groupName:"Halogens", category:"halogen", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s² 4p⁵"},
+  {symbol:"Kr", name:"Krypton", atomicNumber:36, atomicMass:83.798, group:"18", groupName:"Noble Gases", category:"noble", radioactive:false, electronConfig:"[Ar] 3d¹⁰ 4s² 4p⁶"},
+
+  /* Period 5 */
+  {symbol:"Rb", name:"Rubidium", atomicNumber:37, atomicMass:85.468, group:"1", groupName:"Alkali Metals", category:"alkali", radioactive:false, electronConfig:"[Kr] 5s¹"},
+  {symbol:"Sr", name:"Strontium", atomicNumber:38, atomicMass:87.62, group:"2", groupName:"Alkaline Earth Metals", category:"alkaline", radioactive:false, electronConfig:"[Kr] 5s²"},
+  {symbol:"Y", name:"Yttrium", atomicNumber:39, atomicMass:88.906, group:"3", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d¹ 5s²"},
+  {symbol:"Zr", name:"Zirconium", atomicNumber:40, atomicMass:91.224, group:"4", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d² 5s²"},
+  {symbol:"Nb", name:"Niobium", atomicNumber:41, atomicMass:92.906, group:"5", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d⁴ 5s¹"},
+  {symbol:"Mo", name:"Molybdenum", atomicNumber:42, atomicMass:95.95, group:"6", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d⁵ 5s¹"},
+  {symbol:"Tc", name:"Technetium", atomicNumber:43, atomicMass:98, group:"7", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Kr] 4d⁵ 5s²"},
+  {symbol:"Ru", name:"Ruthenium", atomicNumber:44, atomicMass:101.07, group:"8", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d⁷ 5s¹"},
+  {symbol:"Rh", name:"Rhodium", atomicNumber:45, atomicMass:102.91, group:"9", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d⁸ 5s¹"},
+  {symbol:"Pd", name:"Palladium", atomicNumber:46, atomicMass:106.42, group:"10", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d¹⁰"},
+  {symbol:"Ag", name:"Silver", atomicNumber:47, atomicMass:107.87, group:"11", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s¹"},
+  {symbol:"Cd", name:"Cadmium", atomicNumber:48, atomicMass:112.41, group:"12", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s²"},
+  {symbol:"In", name:"Indium", atomicNumber:49, atomicMass:114.82, group:"13", groupName:"Boron Group", category:"metal", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s² 5p¹"},
+  {symbol:"Sn", name:"Tin", atomicNumber:50, atomicMass:118.71, group:"14", groupName:"Carbon Group", category:"metal", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s² 5p²"},
+  {symbol:"Sb", name:"Antimony", atomicNumber:51, atomicMass:121.76, group:"15", groupName:"Pnictogens", category:"metalloid", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s² 5p³"},
+  {symbol:"Te", name:"Tellurium", atomicNumber:52, atomicMass:127.60, group:"16", groupName:"Chalcogens", category:"metalloid", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s² 5p⁴"},
+  {symbol:"I", name:"Iodine", atomicNumber:53, atomicMass:126.90, group:"17", groupName:"Halogens", category:"halogen", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s² 5p⁵"},
+  {symbol:"Xe", name:"Xenon", atomicNumber:54, atomicMass:131.29, group:"18", groupName:"Noble Gases", category:"noble", radioactive:false, electronConfig:"[Kr] 4d¹⁰ 5s² 5p⁶"},
+
+  /* Period 6 */
+  {symbol:"Cs", name:"Cesium", atomicNumber:55, atomicMass:132.91, group:"1", groupName:"Alkali Metals", category:"alkali", radioactive:false, electronConfig:"[Xe] 6s¹"},
+  {symbol:"Ba", name:"Barium", atomicNumber:56, atomicMass:137.33, group:"2", groupName:"Alkaline Earth Metals", category:"alkaline", radioactive:false, electronConfig:"[Xe] 6s²"},
+  
+  /* Lanthanides */
+  {symbol:"La", name:"Lanthanum", atomicNumber:57, atomicMass:138.91, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 5d¹ 6s²"},
+  {symbol:"Ce", name:"Cerium", atomicNumber:58, atomicMass:140.12, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f¹ 5d¹ 6s²"},
+  {symbol:"Pr", name:"Praseodymium", atomicNumber:59, atomicMass:140.91, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f³ 6s²"},
+  {symbol:"Nd", name:"Neodymium", atomicNumber:60, atomicMass:144.24, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f⁴ 6s²"},
+  {symbol:"Pm", name:"Promethium", atomicNumber:61, atomicMass:145, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:true, electronConfig:"[Xe] 4f⁵ 6s²"},
+  {symbol:"Sm", name:"Samarium", atomicNumber:62, atomicMass:150.36, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f⁶ 6s²"},
+  {symbol:"Eu", name:"Europium", atomicNumber:63, atomicMass:151.96, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f⁷ 6s²"},
+  {symbol:"Gd", name:"Gadolinium", atomicNumber:64, atomicMass:157.25, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f⁷ 5d¹ 6s²"},
+  {symbol:"Tb", name:"Terbium", atomicNumber:65, atomicMass:158.93, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f⁹ 6s²"},
+  {symbol:"Dy", name:"Dysprosium", atomicNumber:66, atomicMass:162.50, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f¹⁰ 6s²"},
+  {symbol:"Ho", name:"Holmium", atomicNumber:67, atomicMass:164.93, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f¹¹ 6s²"},
+  {symbol:"Er", name:"Erbium", atomicNumber:68, atomicMass:167.26, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f¹² 6s²"},
+  {symbol:"Tm", name:"Thulium", atomicNumber:69, atomicMass:168.93, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f¹³ 6s²"},
+  {symbol:"Yb", name:"Ytterbium", atomicNumber:70, atomicMass:173.05, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 6s²"},
+  {symbol:"Lu", name:"Lutetium", atomicNumber:71, atomicMass:174.97, group:"lanthanide", groupName:"Lanthanides", category:"lanthanide", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d¹ 6s²"},
+
+  /* Period 6 continued */
+  {symbol:"Hf", name:"Hafnium", atomicNumber:72, atomicMass:178.49, group:"4", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d² 6s²"},
+  {symbol:"Ta", name:"Tantalum", atomicNumber:73, atomicMass:180.95, group:"5", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d³ 6s²"},
+  {symbol:"W", name:"Tungsten", atomicNumber:74, atomicMass:183.84, group:"6", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d⁴ 6s²"},
+  {symbol:"Re", name:"Rhenium", atomicNumber:75, atomicMass:186.21, group:"7", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d⁵ 6s²"},
+  {symbol:"Os", name:"Osmium", atomicNumber:76, atomicMass:190.23, group:"8", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d⁶ 6s²"},
+  {symbol:"Ir", name:"Iridium", atomicNumber:77, atomicMass:192.22, group:"9", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d⁷ 6s²"},
+  {symbol:"Pt", name:"Platinum", atomicNumber:78, atomicMass:195.08, group:"10", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d⁹ 6s¹"},
+  {symbol:"Au", name:"Gold", atomicNumber:79, atomicMass:196.97, group:"11", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s¹"},
+  {symbol:"Hg", name:"Mercury", atomicNumber:80, atomicMass:200.59, group:"12", groupName:"Transition Metals", category:"transition", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s²"},
+  {symbol:"Tl", name:"Thallium", atomicNumber:81, atomicMass:204.38, group:"13", groupName:"Boron Group", category:"metal", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹"},
+  {symbol:"Pb", name:"Lead", atomicNumber:82, atomicMass:207.2, group:"14", groupName:"Carbon Group", category:"metal", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²"},
+  {symbol:"Bi", name:"Bismuth", atomicNumber:83, atomicMass:208.98, group:"15", groupName:"Pnictogens", category:"metal", radioactive:false, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³"},
+  {symbol:"Po", name:"Polonium", atomicNumber:84, atomicMass:209, group:"16", groupName:"Chalcogens", category:"metalloid", radioactive:true, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴"},
+  {symbol:"At", name:"Astatine", atomicNumber:85, atomicMass:210, group:"17", groupName:"Halogens", category:"halogen", radioactive:true, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵"},
+  {symbol:"Rn", name:"Radon", atomicNumber:86, atomicMass:222, group:"18", groupName:"Noble Gases", category:"noble", radioactive:true, electronConfig:"[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶"},
+
+  /* Period 7 */
+  {symbol:"Fr", name:"Francium", atomicNumber:87, atomicMass:223, group:"1", groupName:"Alkali Metals", category:"alkali", radioactive:true, electronConfig:"[Rn] 7s¹"},
+  {symbol:"Ra", name:"Radium", atomicNumber:88, atomicMass:226, group:"2", groupName:"Alkaline Earth Metals", category:"alkaline", radioactive:true, electronConfig:"[Rn] 7s²"},
+
+  /* Actinides */
+  {symbol:"Ac", name:"Actinium", atomicNumber:89, atomicMass:227, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 6d¹ 7s²"},
+  {symbol:"Th", name:"Thorium", atomicNumber:90, atomicMass:232.04, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 6d² 7s²"},
+  {symbol:"Pa", name:"Protactinium", atomicNumber:91, atomicMass:231.04, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f² 6d¹ 7s²"},
+  {symbol:"U", name:"Uranium", atomicNumber:92, atomicMass:238.03, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f³ 6d¹ 7s²"},
+  {symbol:"Np", name:"Neptunium", atomicNumber:93, atomicMass:237, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f⁴ 6d¹ 7s²"},
+  {symbol:"Pu", name:"Plutonium", atomicNumber:94, atomicMass:244, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f⁶ 7s²"},
+  {symbol:"Am", name:"Americium", atomicNumber:95, atomicMass:243, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f⁷ 7s²"},
+  {symbol:"Cm", name:"Curium", atomicNumber:96, atomicMass:247, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f⁷ 6d¹ 7s²"},
+  {symbol:"Bk", name:"Berkelium", atomicNumber:97, atomicMass:247, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f⁹ 7s²"},
+  {symbol:"Cf", name:"Californium", atomicNumber:98, atomicMass:251, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f¹⁰ 7s²"},
+  {symbol:"Es", name:"Einsteinium", atomicNumber:99, atomicMass:252, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f¹¹ 7s²"},
+  {symbol:"Fm", name:"Fermium", atomicNumber:100, atomicMass:257, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f¹² 7s²"},
+  {symbol:"Md", name:"Mendelevium", atomicNumber:101, atomicMass:258, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f¹³ 7s²"},
+  {symbol:"No", name:"Nobelium", atomicNumber:102, atomicMass:259, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 7s²"},
+  {symbol:"Lr", name:"Lawrencium", atomicNumber:103, atomicMass:266, group:"actinide", groupName:"Actinides", category:"actinide", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹ 7s²"},
+
+  /* Period 7 continued */
+  {symbol:"Rf", name:"Rutherfordium", atomicNumber:104, atomicMass:267, group:"4", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d² 7s²"},
+  {symbol:"Db", name:"Dubnium", atomicNumber:105, atomicMass:268, group:"5", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d³ 7s²"},
+  {symbol:"Sg", name:"Seaborgium", atomicNumber:106, atomicMass:269, group:"6", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d⁴ 7s²"},
+  {symbol:"Bh", name:"Bohrium", atomicNumber:107, atomicMass:270, group:"7", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d⁵ 7s²"},
+  {symbol:"Hs", name:"Hassium", atomicNumber:108, atomicMass:277, group:"8", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d⁶ 7s²"},
+  {symbol:"Mt", name:"Meitnerium", atomicNumber:109, atomicMass:278, group:"9", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d⁷ 7s²"},
+  {symbol:"Ds", name:"Darmstadtium", atomicNumber:110, atomicMass:281, group:"10", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d⁸ 7s²"},
+  {symbol:"Rg", name:"Roentgenium", atomicNumber:111, atomicMass:282, group:"11", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d⁹ 7s²"},
+  {symbol:"Cn", name:"Copernicium", atomicNumber:112, atomicMass:285, group:"12", groupName:"Transition Metals", category:"transition", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹⁰ 7s²"},
+  {symbol:"Nh", name:"Nihonium", atomicNumber:113, atomicMass:286, group:"13", groupName:"Boron Group", category:"metal", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹"},
+  {symbol:"Fl", name:"Flerovium", atomicNumber:114, atomicMass:289, group:"14", groupName:"Carbon Group", category:"metal", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²"},
+  {symbol:"Mc", name:"Moscovium", atomicNumber:115, atomicMass:290, group:"15", groupName:"Pnictogens", category:"metal", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³"},
+  {symbol:"Lv", name:"Livermorium", atomicNumber:116, atomicMass:293, group:"16", groupName:"Chalcogens", category:"metal", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴"},
+  {symbol:"Ts", name:"Tennessine", atomicNumber:117, atomicMass:294, group:"17", groupName:"Halogens", category:"halogen", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵"},
+  {symbol:"Og", name:"Oganesson", atomicNumber:118, atomicMass:294, group:"18", groupName:"Noble Gases", category:"noble", radioactive:true, electronConfig:"[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶"}
+];
+
+const grid = document.getElementById("cardGrid");
+const generateBtn = document.getElementById("generateBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+
+generateBtn.addEventListener("click", generateCards);
+downloadBtn.addEventListener("click", downloadPDF);
+
+function generateCards() {
+  const group = document.getElementById("groupSelect").value;
+  const width = parseInt(document.getElementById("cardWidth").value);
+  const height = parseInt(document.getElementById("cardHeight").value);
+  const borderColor = document.getElementById("borderColor").value;
+  const bgColor = document.getElementById("bgColor").value;
+  const textColor = document.getElementById("textColor").value;
+
+  if (!group) {
+    alert("Please select a group first!");
+    return;
+  }
+
+  grid.innerHTML = "";
+  grid.style.gridTemplateColumns = `repeat(auto-fill, minmax(${width}px, 1fr))`;
+
+  const groupElements = elements.filter(e => e.group === group);
+
+  if (groupElements.length === 0) {
+    alert("No elements found for this group.");
+    return;
+  }
+
+  groupElements.forEach(el => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.width = width + "px";
+    card.style.height = height + "px";
+    card.style.background = bgColor;
+    card.style.color = textColor;
+
+    card.innerHTML = `
+      <div class="card-border-top" style="background: ${borderColor};"></div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="atomic-number" style="color: ${textColor};">${el.atomicNumber}</div>
+          ${el.radioactive ? '<div class="radioactive-badge">☢</div>' : ''}
+        </div>
+        <div class="symbol" style="color: ${textColor};">${el.symbol}</div>
+        <div class="name" style="color: ${textColor};">${el.name}</div>
+        <div class="electron-config">${el.electronConfig}</div>
+        <div class="card-footer">
+          <div class="meta-row">
+            <span class="meta-label">Atomic Mass</span>
+            <span class="meta-value" style="color: ${textColor};">${el.atomicMass}</span>
+          </div>
+          <div class="group-badge" style="color: ${textColor};">${el.groupName}</div>
+        </div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+async function downloadPDF() {
+  if (!grid.children.length) {
+    alert("Please generate cards first!");
+    return;
+  }
+
+  downloadBtn.disabled = true;
+  downloadBtn.textContent = "Generating PDF...";
+
+  try {
+    const canvas = await html2canvas(grid, { 
+      scale: 2,
+      backgroundColor: '#f8f9fa',
+      logging: false
+    });
+    
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    let position = 0;
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    if (pdfHeight > pageHeight) {
+      while (position < pdfHeight) {
+        pdf.addImage(imgData, "PNG", 0, -position, pdfWidth, pdfHeight);
+        position += pageHeight;
+        if (position < pdfHeight) {
+          pdf.addPage();
+        }
+      }
+    } else {
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    }
+
+    pdf.save("periodic-table-cards.pdf");
+  } catch (error) {
+    alert("Error generating PDF: " + error.message);
+  } finally {
+    downloadBtn.disabled = false;
+    downloadBtn.textContent = "Download as PDF";
+  }
+}
+</script>
+
+</body>
+</html>
