@@ -1,248 +1,88 @@
+# Periodic Table Card Generator Game
 
-Periodic Table Card Generator Game
-Overview
+## 1. Game Description
 
-The Periodic Table Card Generator Game is an educational learning game designed to help students understand chemical elements in a clear and visual way.
-Instead of memorizing elements from a textbook, students explore the periodic table through interactive cards that represent each element.
+### 1.1 Overview
+The Periodic Table Card Generator Game is an educational learning game designed to help students understand chemical elements in a simple and visual way. Instead of memorizing information from a textbook, students explore elements through collectible-style cards.
 
-The game focuses on learning by grouping, visual memory, and hands-on interaction.
+Each card represents one chemical element and displays its most important details in a clear and readable format. The game focuses on learning elements group by group, which helps students understand patterns in the periodic table.
 
-Target Audience
+---
 
-Students aged 8 to 14
+### 1.2 Objective of the Game
+The main objectives of the game are:
+- To help students learn chemical elements group-wise
+- To improve memory using short and simple memory hints
+- To make chemistry learning more engaging and less stressful
+- To encourage exploration and curiosity
 
-School classrooms
+This game is suitable for students aged 8 to 14 and can be used both in classrooms and at home.
 
-Teachers conducting revision or activities
+---
 
-Self-learners studying chemistry basics
+### 1.3 How the Game Works
+1. The user selects a periodic table group (for example, Group 1 or Group 17).
+2. The system generates cards for **all elements in that group**.
+3. Each element appears as a separate card with its details.
+4. The user can customize the card size and colors.
+5. The generated cards can be downloaded as a PDF for offline use.
 
-Learning Objectives
+---
 
-By playing this game, students will be able to:
+### 1.4 Element Card Information
+Each element card contains:
+- Element Symbol (large and clear)
+- Element Name
+- Atomic Number
+- Atomic Mass
+- Group Name
+- A short memory sentence for easy recall
 
-Identify elements by symbol and name
+The information is kept minimal so that students are not overwhelmed.
 
-Understand how elements are grouped in the periodic table
+---
 
-Observe similarities between elements in the same group
+### 1.5 Customization Features
+The game allows users to:
+- Change card width and height
+- Change card background color
+- Change card border color
 
-Remember element properties using short memory hints
+This makes the game flexible for different learning environments such as classrooms, presentations, or personal study.
 
-Develop confidence in learning chemistry concepts
+---
 
-How the Game Works
+### 1.6 Educational Benefits
+- Helps students understand periodic table structure
+- Supports visual and active learning
+- Improves recall through repetition and grouping
+- Makes chemistry learning more interactive
 
-The student selects a periodic table group from a dropdown menu.
+---
 
-All elements belonging to that group are generated as cards.
+### 1.7 Usage Scenarios
+Teachers can use this game for:
+- Classroom demonstrations
+- Group activities
+- Revision sessions
+- Printing cards for quizzes
 
-Each element appears exactly once. No elements are missing.
+Students can use it for:
+- Self-study
+- Exam preparation
+- Concept revision
+- Learning out of curiosity
 
-Cards can be customized in size and color.
+---
 
-The generated cards can be downloaded as a PDF for offline use.
+## 2. Game Rules and Sample Example
 
-Element Cards
+### 2.1 Game Rules
 
-Each element card includes:
+#### Rule 1: Group Selection
+The player must select one periodic table group at a time.  
+Only elements belonging to that group will be shown.
 
-Element symbol (large and clear)
+[Blue – Information]
+This helps students focus on one group without distract
 
-Element name
-
-Atomic number
-
-Atomic mass
-
-Group name
-
-A short memory line for easy recall
-
-Every card looks slightly different to avoid repetition and improve visual memory.
-
-Customization Features
-
-Users can control how the cards look:
-
-Set custom card width
-
-Set custom card height
-
-Choose background color for cards
-
-Choose border color for cards
-
-This allows the game to be used both on screens and for printed materials.
-
-Group-Based Learning
-
-The game is structured around periodic table groups:
-
-Group 1 to Group 18
-
-Lanthanides
-
-Actinides
-
-When a group is selected, all elements in that group are shown together, helping students clearly see group patterns and similarities.
-
-Download and Offline Learning
-
-The game provides a Download as PDF option.
-
-This allows:
-
-Printing cards for classroom activities
-
-Sharing cards with classmates
-
-Studying without internet access
-
-The PDF preserves card size, layout, and colors.
-
-Educational Benefits
-
-Encourages visual and active learning
-
-Reduces rote memorization
-
-Makes abstract concepts easier to understand
-
-Supports both classroom teaching and self-study
-
-Summary
-
-The Periodic Table Card Generator Game transforms the periodic table into an interactive learning experience.
-By combining structured group learning, customization, and downloadable cards, the game helps students understand chemistry in a simple, clear, and engaging way.
-
-Game Rules and Sample Examples
-Game Rules
-Rule 1: Group Selection
-
-The player must select one periodic table group at a time.
-Only elements belonging to the selected group will be displayed.
-
-Rule 2: Complete Group Display
-
-When a group is selected:
-
-All elements in that group must appear
-
-No element should be missing or repeated
-
-This rule ensures correct understanding of periodic table structure.
-
-Rule 3: Card Customization
-
-Before generating cards, the player can:
-
-Set card width and height
-
-Choose background color
-
-Choose border color
-
-These settings apply to all generated cards.
-
-Rule 4: Element Information Integrity
-
-Each card must always show:
-
-Correct symbol
-
-Correct atomic number
-
-Correct atomic mass
-
-Correct group name
-
-No card should contain incomplete or incorrect data.
-
-Rule 5: Download Rule
-
-Cards can only be downloaded as a PDF after they are generated.
-If no cards are visible, download is not allowed.
-
-Sample Examples (Color-Based Situations)
-Example 1: Alkali Metals (Group 1)
-
-Situation:
-A teacher wants students to quickly identify highly reactive metals.
-
-Settings:
-
-Background color: Light red
-
-Border color: Dark red
-
-Card size: Medium
-
-Outcome:
-All Group 1 elements (Lithium, Sodium, Potassium, etc.) appear together.
-The red color visually reinforces the idea of high reactivity.
-
-Example 2: Halogens (Group 17)
-
-Situation:
-A student is revising reactive non-metals.
-
-Settings:
-
-Background color: Light blue
-
-Border color: Blue
-
-Card size: Small
-
-Outcome:
-Fluorine, Chlorine, Bromine, and other halogens appear together.
-Blue tones help students mentally separate this group from metals.
-
-Example 3: Noble Gases (Group 18)
-
-Situation:
-A teacher explains elements that do not react easily.
-
-Settings:
-
-Background color: Light grey
-
-Border color: Black
-
-Card size: Large
-
-Outcome:
-Helium, Neon, Argon, and other noble gases appear together.
-Neutral colors reflect their stable and inactive nature.
-
-Example 4: Actinides (Radioactive Elements)
-
-Situation:
-Advanced students are learning about radioactive elements.
-
-Settings:
-
-Background color: Pale yellow
-
-Border color: Dark green
-
-Card size: Medium
-
-Outcome:
-All actinides appear together with a clear visual distinction.
-Color choice helps students quickly identify radioactive elements.
-
-Classroom Use Example
-
-A teacher can:
-
-Select a group
-
-Choose a group-specific color
-
-Generate cards
-
-Download and print the cards
-
-Use them for quizzes, sorting activities, or revision games
